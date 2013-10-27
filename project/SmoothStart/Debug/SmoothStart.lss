@@ -1,0 +1,305 @@
+
+SmoothStart.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000140  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00000140  000001d4  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000004  00800060  00800060  000001d4  2**0
+                  ALLOC
+  3 .stab         000006b4  00000000  00000000  000001d4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000097  00000000  00000000  00000888  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .comment      0000002f  00000000  00000000  0000091f  2**0
+                  CONTENTS, READONLY
+  6 .debug_aranges 00000028  00000000  00000000  0000094e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_info   000001c1  00000000  00000000  00000976  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_abbrev 000000f2  00000000  00000000  00000b37  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_line   000001c6  00000000  00000000  00000c29  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_frame  00000044  00000000  00000000  00000df0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_str    00000163  00000000  00000000  00000e34  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_loc    00000082  00000000  00000000  00000f97  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_ranges 00000018  00000000  00000000  00001019  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
+   2:	21 c0       	rjmp	.+66     	; 0x46 <__bad_interrupt>
+   4:	20 c0       	rjmp	.+64     	; 0x46 <__bad_interrupt>
+   6:	20 c0       	rjmp	.+64     	; 0x48 <__vector_3>
+   8:	1e c0       	rjmp	.+60     	; 0x46 <__bad_interrupt>
+   a:	1d c0       	rjmp	.+58     	; 0x46 <__bad_interrupt>
+   c:	1c c0       	rjmp	.+56     	; 0x46 <__bad_interrupt>
+   e:	1b c0       	rjmp	.+54     	; 0x46 <__bad_interrupt>
+  10:	1a c0       	rjmp	.+52     	; 0x46 <__bad_interrupt>
+  12:	19 c0       	rjmp	.+50     	; 0x46 <__bad_interrupt>
+
+00000014 <__ctors_end>:
+  14:	11 24       	eor	r1, r1
+  16:	1f be       	out	0x3f, r1	; 63
+  18:	cf e9       	ldi	r28, 0x9F	; 159
+  1a:	cd bf       	out	0x3d, r28	; 61
+
+0000001c <__do_copy_data>:
+  1c:	10 e0       	ldi	r17, 0x00	; 0
+  1e:	a0 e6       	ldi	r26, 0x60	; 96
+  20:	b0 e0       	ldi	r27, 0x00	; 0
+  22:	e0 e4       	ldi	r30, 0x40	; 64
+  24:	f1 e0       	ldi	r31, 0x01	; 1
+  26:	02 c0       	rjmp	.+4      	; 0x2c <__do_copy_data+0x10>
+  28:	05 90       	lpm	r0, Z+
+  2a:	0d 92       	st	X+, r0
+  2c:	a0 36       	cpi	r26, 0x60	; 96
+  2e:	b1 07       	cpc	r27, r17
+  30:	d9 f7       	brne	.-10     	; 0x28 <__do_copy_data+0xc>
+
+00000032 <__do_clear_bss>:
+  32:	20 e0       	ldi	r18, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	01 c0       	rjmp	.+2      	; 0x3c <.do_clear_bss_start>
+
+0000003a <.do_clear_bss_loop>:
+  3a:	1d 92       	st	X+, r1
+
+0000003c <.do_clear_bss_start>:
+  3c:	a4 36       	cpi	r26, 0x64	; 100
+  3e:	b2 07       	cpc	r27, r18
+  40:	e1 f7       	brne	.-8      	; 0x3a <.do_clear_bss_loop>
+  42:	24 d0       	rcall	.+72     	; 0x8c <main>
+  44:	7b c0       	rjmp	.+246    	; 0x13c <_exit>
+
+00000046 <__bad_interrupt>:
+  46:	dc cf       	rjmp	.-72     	; 0x0 <__vectors>
+
+00000048 <__vector_3>:
+unsigned char LightValue = 0;
+
+unsigned int timeBtn = 0;
+
+ISR(TIM0_OVF_vect)
+{
+  48:	1f 92       	push	r1
+  4a:	0f 92       	push	r0
+  4c:	0f b6       	in	r0, 0x3f	; 63
+  4e:	0f 92       	push	r0
+  50:	11 24       	eor	r1, r1
+  52:	8f 93       	push	r24
+		if (MotorStatus==1) {
+  54:	80 91 63 00 	lds	r24, 0x0063
+  58:	81 30       	cpi	r24, 0x01	; 1
+  5a:	11 f4       	brne	.+4      	; 0x60 <__vector_3+0x18>
+			PORTB &= ~(1<<outMotor);
+  5c:	c0 98       	cbi	0x18, 0	; 24
+			PORTB |= (1<<outLed);
+  5e:	c2 9a       	sbi	0x18, 2	; 24
+		}
+		if (MotorStatus==2) {
+  60:	80 91 63 00 	lds	r24, 0x0063
+  64:	82 30       	cpi	r24, 0x02	; 2
+  66:	11 f4       	brne	.+4      	; 0x6c <__vector_3+0x24>
+			PORTB |= (1<<outMotor);
+  68:	c0 9a       	sbi	0x18, 0	; 24
+			PORTB &= ~(1<<outLed);
+  6a:	c2 98       	cbi	0x18, 2	; 24
+		}
+
+		if (LightStatus==1) { PORTB |= (1<<outLight); }
+  6c:	80 91 62 00 	lds	r24, 0x0062
+  70:	81 30       	cpi	r24, 0x01	; 1
+  72:	09 f4       	brne	.+2      	; 0x76 <__vector_3+0x2e>
+  74:	c1 9a       	sbi	0x18, 1	; 24
+		if (LightStatus==2) { PORTB &= ~(1<<outLight); }
+  76:	80 91 62 00 	lds	r24, 0x0062
+  7a:	82 30       	cpi	r24, 0x02	; 2
+  7c:	09 f4       	brne	.+2      	; 0x80 <__vector_3+0x38>
+  7e:	c1 98       	cbi	0x18, 1	; 24
+}
+  80:	8f 91       	pop	r24
+  82:	0f 90       	pop	r0
+  84:	0f be       	out	0x3f, r0	; 63
+  86:	0f 90       	pop	r0
+  88:	1f 90       	pop	r1
+  8a:	18 95       	reti
+
+0000008c <main>:
+
+int main(void)
+{
+	// Init port B
+	DDRB  = 0b00000111;	// 0 - вход, 1 - выход
+  8c:	87 e0       	ldi	r24, 0x07	; 7
+  8e:	87 bb       	out	0x17, r24	; 23
+	PORTB = 0b00000001;
+  90:	81 e0       	ldi	r24, 0x01	; 1
+  92:	88 bb       	out	0x18, r24	; 24
+
+	// Init PWM
+	
+	// Init Timer0
+	TCCR0B |= (1 << CS00);
+  94:	83 b7       	in	r24, 0x33	; 51
+  96:	81 60       	ori	r24, 0x01	; 1
+  98:	83 bf       	out	0x33, r24	; 51
+	TIMSK0 |= (1 << TOIE0);
+  9a:	89 b7       	in	r24, 0x39	; 57
+  9c:	82 60       	ori	r24, 0x02	; 2
+  9e:	89 bf       	out	0x39, r24	; 57
+	sei();
+  a0:	78 94       	sei
+			// Среднее нажатие
+			if (cntShort<timeBtn && timeBtn<cntMedium)
+			{
+				if (LightStatus==0 || LightStatus==2)
+				{
+					LightStatus = 1;
+  a2:	51 e0       	ldi	r21, 0x01	; 1
+				}
+				else
+				{
+					LightStatus = 2;
+  a4:	42 e0       	ldi	r20, 0x02	; 2
+	sei();
+	
+	while(1)
+	{
+		// Проверяем нажатие кнопки
+		if ((PINB&(1<<inButton))==0) // Если кнопка нажата
+  a6:	b3 99       	sbic	0x16, 3	; 22
+  a8:	fe cf       	rjmp	.-4      	; 0xa6 <__stack+0x7>
+		{
+			timeBtn = 0;
+  aa:	10 92 61 00 	sts	0x0061, r1
+  ae:	10 92 60 00 	sts	0x0060, r1
+
+			// Ждем отжатия клавиши (Считаем длину удержания кнопки)
+			while((PINB&(1<<inButton))==0)
+  b2:	b3 99       	sbic	0x16, 3	; 22
+  b4:	38 c0       	rjmp	.+112    	; 0x126 <__stack+0x87>
+			{
+				timeBtn++;
+  b6:	80 91 60 00 	lds	r24, 0x0060
+  ba:	90 91 61 00 	lds	r25, 0x0061
+  be:	01 96       	adiw	r24, 0x01	; 1
+  c0:	90 93 61 00 	sts	0x0061, r25
+  c4:	80 93 60 00 	sts	0x0060, r24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  c8:	81 ee       	ldi	r24, 0xE1	; 225
+  ca:	94 e0       	ldi	r25, 0x04	; 4
+  cc:	01 97       	sbiw	r24, 0x01	; 1
+  ce:	f1 f7       	brne	.-4      	; 0xcc <__stack+0x2d>
+  d0:	00 c0       	rjmp	.+0      	; 0xd2 <__stack+0x33>
+  d2:	00 00       	nop
+		if ((PINB&(1<<inButton))==0) // Если кнопка нажата
+		{
+			timeBtn = 0;
+
+			// Ждем отжатия клавиши (Считаем длину удержания кнопки)
+			while((PINB&(1<<inButton))==0)
+  d4:	b3 9b       	sbis	0x16, 3	; 22
+  d6:	ef cf       	rjmp	.-34     	; 0xb6 <__stack+0x17>
+				timeBtn++;
+				_delay_ms(5);
+			}
+			
+			// Короткое нажатие
+			if (cntMin<timeBtn && timeBtn<cntShort)
+  d8:	80 91 60 00 	lds	r24, 0x0060
+  dc:	90 91 61 00 	lds	r25, 0x0061
+  e0:	9c 01       	movw	r18, r24
+  e2:	2b 50       	subi	r18, 0x0B	; 11
+  e4:	31 09       	sbc	r19, r1
+  e6:	2b 38       	cpi	r18, 0x8B	; 139
+  e8:	31 05       	cpc	r19, r1
+  ea:	58 f4       	brcc	.+22     	; 0x102 <__stack+0x63>
+			{
+				if (MotorStatus==0 || MotorStatus==2)
+  ec:	20 91 63 00 	lds	r18, 0x0063
+  f0:	22 23       	and	r18, r18
+  f2:	11 f0       	breq	.+4      	; 0xf8 <__stack+0x59>
+  f4:	22 30       	cpi	r18, 0x02	; 2
+  f6:	19 f4       	brne	.+6      	; 0xfe <__stack+0x5f>
+				{
+					MotorStatus = 1;
+  f8:	50 93 63 00 	sts	0x0063, r21
+  fc:	02 c0       	rjmp	.+4      	; 0x102 <__stack+0x63>
+				}
+				else
+				{
+					MotorStatus = 2;
+  fe:	40 93 63 00 	sts	0x0063, r20
+				}
+			}
+
+			// Среднее нажатие
+			if (cntShort<timeBtn && timeBtn<cntMedium)
+ 102:	9c 01       	movw	r18, r24
+ 104:	27 59       	subi	r18, 0x97	; 151
+ 106:	31 09       	sbc	r19, r1
+ 108:	2d 35       	cpi	r18, 0x5D	; 93
+ 10a:	31 40       	sbci	r19, 0x01	; 1
+ 10c:	70 f4       	brcc	.+28     	; 0x12a <__stack+0x8b>
+			{
+				if (LightStatus==0 || LightStatus==2)
+ 10e:	20 91 62 00 	lds	r18, 0x0062
+ 112:	22 23       	and	r18, r18
+ 114:	11 f0       	breq	.+4      	; 0x11a <__stack+0x7b>
+ 116:	22 30       	cpi	r18, 0x02	; 2
+ 118:	19 f4       	brne	.+6      	; 0x120 <__stack+0x81>
+				{
+					LightStatus = 1;
+ 11a:	50 93 62 00 	sts	0x0062, r21
+ 11e:	05 c0       	rjmp	.+10     	; 0x12a <__stack+0x8b>
+				}
+				else
+				{
+					LightStatus = 2;
+ 120:	40 93 62 00 	sts	0x0062, r20
+ 124:	02 c0       	rjmp	.+4      	; 0x12a <__stack+0x8b>
+				timeBtn++;
+				_delay_ms(5);
+			}
+			
+			// Короткое нажатие
+			if (cntMin<timeBtn && timeBtn<cntShort)
+ 126:	80 e0       	ldi	r24, 0x00	; 0
+ 128:	90 e0       	ldi	r25, 0x00	; 0
+					LightStatus = 2;
+				}
+			}
+
+			// Длинное нажатие
+			if (cntMedium<timeBtn)
+ 12a:	85 3f       	cpi	r24, 0xF5	; 245
+ 12c:	91 40       	sbci	r25, 0x01	; 1
+ 12e:	08 f4       	brcc	.+2      	; 0x132 <__stack+0x93>
+ 130:	ba cf       	rjmp	.-140    	; 0xa6 <__stack+0x7>
+			{
+				MotorStatus = 2;
+ 132:	40 93 63 00 	sts	0x0063, r20
+				LightStatus = 2;
+ 136:	40 93 62 00 	sts	0x0062, r20
+ 13a:	b5 cf       	rjmp	.-150    	; 0xa6 <__stack+0x7>
+
+0000013c <_exit>:
+ 13c:	f8 94       	cli
+
+0000013e <__stop_program>:
+ 13e:	ff cf       	rjmp	.-2      	; 0x13e <__stop_program>
